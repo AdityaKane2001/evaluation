@@ -10,6 +10,7 @@ All boxes assume that each image is 640x640
 
 
 import numpy as np
+import pandas as pd
 import os
 
 class Converter:
@@ -27,13 +28,13 @@ class Converter:
             `Annotation` object
 
         Raises:
-            Not implemented erroe
+            Not implemented error
         '''
 
         raise NotImplementedError
 
     def __call__(self):
-        self.parse_fn()
+        return self.parse_fn()
 
 '''
 class Annotation:
@@ -89,3 +90,47 @@ class YOLOConverter(Converter):
                 annots.append([x1,y1,x2,y2])
                 del nums,x,y,w,h
         return np.array(annots)
+
+
+class RetinaConverter(Converter):
+    def __init__(self,source):
+        Converter.__init__(self,source,source_type='file')
+
+    def parser(self):
+        df = pd.read_csv(self.source,header=None)
+
+        img_names = list(set(df[0]))
+        annotations = dict()
+        for i in img_names:
+            part = df.loc[df[0] == i]
+
+            if len(part)>1:
+                annots = []
+
+                for j in part.iterrows():
+
+                    x1 = float(j[1][1]) * 640 / 416
+                    y1 = float(j[1][2]) * 640 / 416
+                    x2 = float(j[1][3]) * 640 / 416
+                    y2 = float(j[1][4]) * 640 / 416
+                    annots.append([x1,y1,x2,y2])
+                annots = np.array(annots)
+                annotations[i] = annots
+            else:
+                annots = []
+
+
+                x1 = float(part[1]) * 640 / 416
+                y1 = float(part[2]) * 640 / 416
+                x2 = float(part[3]) * 640 / 416
+                y2 = float(part[4]) * 640 / 416
+
+                annots.append([[x1, y1, x2, y2]])
+                annotations[i] = np.array(annots)
+
+        return annotations
+
+
+
+ret = RetinaConverter('valid_annotations.csv')
+print(len(ret().keys()))
