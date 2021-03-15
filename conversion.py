@@ -4,6 +4,7 @@ Annotations format:
 dict annotations:
     str identifier
     np.array box (x1,y1,x2,y2)
+All boxes assume that each image is 640x640
 '''
 
 
@@ -68,6 +69,7 @@ class YOLOConverter(Converter):
             annotations = dict()
             for i in os.listdir(self.source):
                 annotations[i] = self.read_to_arr(os.path.join(self.source,i))
+            return annotations
         else:
             raise OSError('Not a directory')
 
@@ -76,5 +78,14 @@ class YOLOConverter(Converter):
         with open(file_path,'r') as f:
             for line in f:
                 nums = line.split()
-                annots.append(nums[1:-1])
+                x = float(nums[1]) * 640
+                y = float(nums[2]) * 640
+                w = float(nums[3]) * 640
+                h = float(nums[4]) * 640
+                x1 = x - (w/2)
+                x2 = x + (w/2)
+                y1 = y - (h/2)
+                y2 = y + (h/2)
+                annots.append([x1,y1,x2,y2])
+                del nums,x,y,w,h
         return np.array(annots)
