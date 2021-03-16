@@ -115,7 +115,8 @@ class RetinaConverter(Converter):
                     y2 = float(j[1][4]) * 640 / 416
                     annots.append([x1,y1,x2,y2])
                 annots = np.array(annots)
-                annotations[i] = annots
+
+                annotations[i.split('/')[3]] = annots
             else:
                 annots = []
 
@@ -125,12 +126,11 @@ class RetinaConverter(Converter):
                 x2 = float(part[3]) * 640 / 416
                 y2 = float(part[4]) * 640 / 416
 
-                annots.append([[x1, y1, x2, y2]])
-                annotations[i] = np.array(annots)
+                annots.append([x1, y1, x2, y2])
+                annotations[i.split('/')[3]] = np.array(annots)
 
         return annotations
 
 
 
-ret = RetinaConverter('valid_annotations.csv')
-print(len(ret().keys()))
+
