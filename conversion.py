@@ -79,26 +79,29 @@ class YOLOConverter(Converter):
         with open(file_path,'r') as f:
             for line in f:
                 nums = line.split()
-                x = float(nums[1]) * 640
-                y = float(nums[2]) * 640
-                w = float(nums[3]) * 640
-                h = float(nums[4]) * 640
-                x1 = x - (w/2)
-                x2 = x + (w/2)
-                y1 = y - (h/2)
-                y2 = y + (h/2)
+                x1 = float(nums[1]) #* 640
+                y1= float(nums[2]) #* 640
+                x2 = float(nums[3]) #* 640
+                y2 = float(nums[4]) #* 640
+                # x1 = x - (w/2)
+                # x2 = x + (w/2)
+                # y1 = y - (h/2)
+                # y2 = y + (h/2)
                 annots.append([x1,y1,x2,y2])
-                del nums,x,y,w,h
+                #del nums,x,y,w,h
         return np.array(annots)
 
 
 class RetinaConverter(Converter):
-    def __init__(self,source):
+    def __init__(self,source,skip=False):
         Converter.__init__(self,source,source_type='file')
+        self.skip=skip
 
     def parser(self):
-        df = pd.read_csv(self.source,header=None)
-
+        if self.skip==True:
+            df = pd.read_csv(self.source,header=None,skiprows=15)
+        else:
+            df = pd.read_csv(self.source, header=None)
         img_names = list(set(df[0]))
         annotations = dict()
         for i in img_names:
@@ -109,10 +112,10 @@ class RetinaConverter(Converter):
 
                 for j in part.iterrows():
 
-                    x1 = float(j[1][1]) * 640 / 416
-                    y1 = float(j[1][2]) * 640 / 416
-                    x2 = float(j[1][3]) * 640 / 416
-                    y2 = float(j[1][4]) * 640 / 416
+                    x1 = float(j[1][1]) #* 640 / 416
+                    y1 = float(j[1][2]) #* 640 / 416
+                    x2 = float(j[1][3]) #* 640 / 416
+                    y2 = float(j[1][4]) #* 640 / 416
                     annots.append([x1,y1,x2,y2])
                 annots = np.array(annots)
 
@@ -121,10 +124,10 @@ class RetinaConverter(Converter):
                 annots = []
 
 
-                x1 = float(part[1]) * 640 / 416
-                y1 = float(part[2]) * 640 / 416
-                x2 = float(part[3]) * 640 / 416
-                y2 = float(part[4]) * 640 / 416
+                x1 = float(part[1]) #* 640 / 416
+                y1 = float(part[2]) #* 640 / 416
+                x2 = float(part[3]) #* 640 / 416
+                y2 = float(part[4]) #* 640 / 416
 
                 annots.append([x1, y1, x2, y2])
                 annotations[i.split('/')[3]] = np.array(annots)
