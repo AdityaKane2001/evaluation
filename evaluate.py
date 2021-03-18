@@ -37,6 +37,34 @@ def are_same(dict1,dict2):
 #             return iou
 #     return 0
 
+def get_overlap_tuples(matrix):
+    overlaps=[]
+    for i in range(matrix.shape[0]):
+        for j in range(matrix.shape[0]):
+            if i>j:
+                if matrix[i,j]>0 and matrix[i,j]<1:
+                    overlaps.append((i,j))
+
+    return overlaps
+
+def eliminate_boxes(overlap_tuples, annots_boxes):
+    final_boxes = [list(i) for i in annots_boxes]
+    annot_boxes = [list(i) for i in annots_boxes]
+    print(overlap_tuples)
+    print(final_boxes)
+    print(annot_boxes)
+    for j in range(len(overlap_tuples)):
+        tup = overlap_tuples[j]
+        if annot_boxes[tup[0]][4] > annot_boxes[tup[1]][4]:
+            if annot_boxes[tup[1]] in final_boxes:
+                final_boxes.remove(annot_boxes[tup[1]])
+        else:
+            if annot_boxes[tup[0]] in final_boxes:
+                final_boxes.remove(annot_boxes[tup[0]])
+
+
+    return final_boxes
+
 def iou(boxA, boxB):
     xA = max(boxA[0], boxB[0])
     yA = max(boxA[1], boxB[1])
@@ -106,6 +134,18 @@ def compute_overlap(a,b):
     return overlap_matrix
 
 
+def box_pruning(boxes):
+    pruned_boxes = []
+
+    overlap = compute_overlap(boxes,boxes)
+
+    print(eliminate_boxes(get_overlap_tuples(overlap), boxes))
+
+
+
+    return np.array(pruned_boxes)
+
+
 
 
 def recall(gt,predicted,iou_threshold):
@@ -124,7 +164,10 @@ def recall(gt,predicted,iou_threshold):
 
 
             gt_annots = gt[gt_key[0]]
+            print(i)
             pred_annots = predicted[i]
+            box_pruning(pred_annots)
+            return 0
 
             num_gt_annots += len(gt_annots)
             num_pred_annots += len(pred_annots)
@@ -133,10 +176,12 @@ def recall(gt,predicted,iou_threshold):
             pred_annots = np.array(sorted(pred_annots, key=lambda x: x[1]))
 
             #gt_annots = non_max_suppression_fast(gt_annots,0.95)
-            print('GT annots for this image:',len(gt_annots))
-            print('Pred annots for this image before NMS:',len(pred_annots))
-            pred_annots = nms(pred_annots,0.3)
-            print('Pred annots for this image after NMS:', len(pred_annots))
+            #print('GT annots for this image:',len(gt_annots))
+            #print('Pred annots for this image before NMS:',len(pred_annots))
+            pred_annots = nms(pred_annots,0.5)
+            # TODO : conf threshold
+            # TODO : use most conf box
+            #print('Pred annots for this image after NMS:', len(pred_annots))
             #print(pred_annots.shape)
             #random.shuffle(pred_annots)
             overlaps = compute_overlap(gt_annots,pred_annots) #(gt_len,pred_len)
@@ -166,7 +211,7 @@ def recall(gt,predicted,iou_threshold):
             else:
                 num_annotations += len(gt_annots)
                 true_positives += len(np.where(overlaps>iou_threshold)[0])
-                print()
+
 
 
         else:
@@ -182,9 +227,11 @@ def recall(gt,predicted,iou_threshold):
 
 ret = RetinaConverter('valid_annotations (1).csv')
 gt = ret()
-predret = RetinaConverter('result_csv (1).csv')
+predret = RetinaConverter('result_csv (2).csv')
 predicted = predret()
 #print(are_same(gt,predicted))
+
+#box_pruning(gt[0])
 
 print(recall(gt,predicted,0.5))
 
