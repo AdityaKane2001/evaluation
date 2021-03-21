@@ -1,0 +1,49 @@
+def recall(gt, predicted, iou_threshold=0.5, conf_thresh=0.5):
+    false_negatives = 0
+    false_positives = 0
+    true_positives = 0
+    num_annotations = 0
+
+    num_gt_annots = 0
+    num_pred_annots = 0
+
+    for i in predicted.keys():
+        gt_key = [key for key in gt.keys() if i[:25] in key]
+
+        if gt_key != []:
+
+            gt_annots = gt[gt_key[0]]
+
+            pred_annots = predicted[i]
+            pred_annots = box_pruning(pred_annots, conf_thresh=conf_thresh)
+
+            # draw_predictions(i, gt_annots, pred_annots)
+
+            num_gt_annots += len(gt_annots)
+            num_pred_annots += len(pred_annots)
+
+            # gt_annots = np.array(sorted(gt_annots, key=lambda x: x[1]))
+            # pred_annots = np.array(sorted(pred_annots, key=lambda x: x[1]))
+
+            overlaps = compute_overlap(gt_annots, pred_annots)  # (gt_len,pred_len)
+
+            if pred_annots.shape == (0,):
+
+                if len(gt_annots) == 1 and gt_annots[0][0] == np.nan:
+                    num_annotations += 1
+                    true_positives += 1
+
+                if len(gt_annots) > 1:
+                    num_annotations += 1
+                    false_negatives += 1
+
+            else:
+
+                num_annotations += len(gt_annots)
+                true_positives += len(np.where(overlaps > iou_threshold)[0])
+
+    print('num_gt_annots: ', num_gt_annots)
+    print('num_pred_annots: ', num_pred_annots)
+    print('true_positives: ', true_positives)
+    print('num_annotations: ', num_annotations)
+    return true_positives / num_annotations
