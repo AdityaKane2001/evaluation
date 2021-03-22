@@ -151,13 +151,25 @@ def get_false_positives(overlaps, thresh):
 def get_false_negatives(gt, pred):
     fn = 0
     for i in gt.keys():
+        gt_annots = gt[i]
         pred_key = [key for key in pred.keys() if i[:20] in key]
 
         if not isempty(gt[i]):
-
             if pred_key == []:
                 print(gt[i])
                 fn += len(gt[i])
+                continue
+
+
+            pred_annots = pred[pred_key[0]]
+            print("GT: ",gt_annots)
+            print("Pred: ",pred_annots)
+            all_overlaps = [compute_overlap(np.array([gt_annots[k]]),pred_annots) for k in range(len(gt_annots))]
+
+            for k in all_overlaps:
+                are_zeros = k < 0.5
+                fn +=len(np.where(np.all(are_zeros))[0])
+
     return fn
 
 
@@ -204,7 +216,7 @@ def evaluate(gt, predicted, iou_threshold=0.5, conf_thresh=0.5):
     print('False negatives: ', false_negatives)
     print('Num gt annots: ', num_gt_annots)
     print('Num pred annots: ', num_pred_annots)
-    print('Precision: ', true_positives / num_pred_annots)
-    print('Recall: ', true_positives / num_gt_annots)
+    print('Precision: ', true_positives / (true_positives + false_positives))
+    print('Recall: ', true_positives / (true_positives + false_negatives))
 
 
