@@ -1,6 +1,6 @@
 import cv2
 from conversion import *
-
+from shapely.geometry import Polygon
 
 def are_same(dict1, dict2):
     dict2_keys = dict2.keys()
@@ -22,6 +22,17 @@ def get_overlap_tuples(matrix):
 
     return overlaps
 
+def quad_iou(box,quad):
+
+    qquad = Polygon([(quad[0],quad[1]),(quad[2],quad[3]),
+                     (quad[4],quad[5]),(quad[6],quad[7])])
+
+    bbox = Polygon([(box[0], box[1]), (box[0], box[3]),
+                    (box[2], box[3]), (box[2], box[1])])
+
+    return bbox.intersection(qquad).area/bbox.union(qquad).area
+
+
 
 def iou(boxA, boxB):
     xA = max(boxA[0], boxB[0])
@@ -36,6 +47,13 @@ def iou(boxA, boxB):
     boxBArea = (boxB[2] - boxB[0]) * (boxB[3] - boxB[1])
     ret_iou = interArea / float(boxAArea + boxBArea - interArea)
     return ret_iou
+
+def compute_quad_overlap(a, b):
+    overlap_matrix = np.zeros((a.shape[0], b.shape[0]))
+    for i in range(len(a)):
+        for j in range(len(b)):
+            overlap_matrix[i, j] = quad_iou(a[i], b[j])
+    return overlap_matrix
 
 
 def compute_overlap(a, b):
@@ -156,20 +174,40 @@ def get_false_negatives(gt, pred):
 
         if not isempty(gt[i]):
             if pred_key == []:
-                print(gt[i])
+
                 fn += len(gt[i])
                 continue
 
 
             pred_annots = pred[pred_key[0]]
-            print("GT: ",gt_annots)
-            print("Pred: ",pred_annots)
-            all_overlaps = [compute_overlap(np.array([gt_annots[k]]),pred_annots) for k in range(len(gt_annots))]
+
+            all_overlaps = [compute_quad_overlap(np.array([gt_annots[k]]),pred_annots) for k in range(len(gt_annots))]
 
             for k in all_overlaps:
                 are_zeros = k < 0.5
                 fn +=len(np.where(np.all(are_zeros))[0])
 
+    return fn
+
+def get_craft_fn(gt, craft_pred):
+    fn = 0
+    for i in gt.keys():
+        gt_annots = gt[i]
+        pred_key = [key for key in craft_pred.keys() if i[:20] in key]
+        if not isempty(gt[i]):
+            if pred_key == []:
+
+                fn += len(gt[i])
+                continue
+
+
+            pred_annots = craft_pred[pred_key[0]]
+
+            all_overlaps = [compute_overlap(np.array([gt_annots[k]]),pred_annots) for k in range(len(gt_annots))]
+
+            for k in all_overlaps:
+                are_zeros = k < 0.5
+                fn +=len(np.where(np.all(are_zeros))[0])
     return fn
 
 
@@ -181,9 +219,11 @@ def get_num_bbox(annot_dict):
 
 
 def evaluate(gt, predicted, iou_threshold=0.5, conf_thresh=0.5):
+    print('Running tests...')
     false_negatives = get_false_negatives(gt, predicted)
     false_positives = 0
     true_positives = 0
+
 
     num_gt_annots = 0
     num_pred_annots = 0
@@ -211,6 +251,8 @@ def evaluate(gt, predicted, iou_threshold=0.5, conf_thresh=0.5):
             true_positives += len(np.where(overlaps > iou_threshold)[0])
             false_positives += get_false_positives(overlaps, iou_threshold)
 
+
+    print()
     print('True positives: ', true_positives)
     print('False positives: ', false_positives)
     print('False negatives: ', false_negatives)
@@ -219,4 +261,43 @@ def evaluate(gt, predicted, iou_threshold=0.5, conf_thresh=0.5):
     print('Precision: ', true_positives / (true_positives + false_positives))
     print('Recall: ', true_positives / (true_positives + false_negatives))
 
+#TODO quad_evaluate()
 
+def craft_evaluate(gt,predicted,iou_threshold=0.5):
+    print('Running tests...')
+    false_negatives = get_false_negatives(gt, predicted)
+    false_positives = 0
+    true_positives = 0
+
+    num_gt_annots = 0
+    num_pred_annots = 0
+
+    for i in predicted.keys():
+        gt_key = [key for key in gt.keys() if i[:25] in key]
+        gt_annots = gt[gt_key[0]]
+
+        pred_annots = predicted[i]
+        #pred_annots = box_pruning(pred_annots, conf_thresh=conf_thresh)
+
+        #draw_predictions(i, gt_annots, pred_annots)
+
+        num_pred_annots += pred_annots.shape[0]
+
+          # (gt_len,pred_len)
+
+        if isempty(gt_annots):
+            false_positives += pred_annots.shape[0]
+
+        else:
+
+            num_gt_annots += len(gt_annots)
+            overlaps = compute_quad_overlap(gt_annots, pred_annots)
+            true_positives += len(np.where(overlaps > iou_threshold)[0])
+            false_positives += get_false_positives(overlaps, iou_threshold)
+    print('True positives: ', true_positives)
+    print('False positives: ', false_positives)
+    print('False negatives: ', false_negatives)
+    print('Num gt annots: ', num_gt_annots)
+    print('Num pred annots: ', num_pred_annots)
+    print('Precision: ', true_positives / (true_positives + false_positives))
+    print('Recall: ', true_positives / (true_positives + false_negatives))
