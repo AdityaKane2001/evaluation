@@ -1,0 +1,11 @@
+252,207,309,220,252,207,308,207,308,219,252,219,ffftfggeead,get,0.6169953346252441,0.3572488047859885,0.3964836373925209,/content/outputs/inference/answersheet/model_finetune_1000_results/res_DM21339_pdf_4_jpg_0.pkl
+57,250,73,263,57,250,72,250,72,262,57,262,oooooo,o,0.551574170589447,0.6150495658318201,0.800278902053833,/content/outputs/inference/answersheet/model_finetune_1000_results/res_DM21339_pdf_4_jpg_1.pkl
+44,380,129,394,46,380,128,380,128,393,46,393,oagoyeaanes,conovers,0.7579376101493835,0.16320363025773654,0.5085130764378442,/content/outputs/inference/answersheet/model_finetune_1000_results/res_DM21339_pdf_4_jpg_2.pkl
+52,349,133,360,52,349,132,349,132,359,52,359,ffeeddaaddaaaaeee,from,0.7790027856826782,0.2398622469866977,0.45838072448968886,/content/outputs/inference/answersheet/model_finetune_1000_results/res_DM21339_pdf_4_jpg_3.pkl
+47,369,127,380,49,369,126,369,126,379,49,379,fosseaeaooyeeeeee,from,0.7101616859436035,0.23508500702240887,0.5892478108406067,/content/outputs/inference/answersheet/model_finetune_1000_results/res_DM21339_pdf_4_jpg_4.pkl
+236,166,277,178,236,166,276,166,276,177,236,177,fgeeaaaadd,and,0.736297607421875,0.25073243826627734,0.6172876190394163,/content/outputs/inference/answersheet/model_finetune_1000_results/res_DM21339_pdf_4_jpg_5.pkl
+166,51,212,62,166,51,211,51,211,61,166,61,aaaaeeeeeeeeeeeeeeee,from,0.7073373198509216,0.4395726930350065,0.6154599845409393,/content/outputs/inference/answersheet/model_finetune_1000_results/res_DM21339_pdf_4_jpg_6.pkl
+170,206,247,218,170,206,246,206,246,217,170,217,tttttfeooee,offee,0.6330040097236633,0.204427379776131,0.5523810833692551,/content/outputs/inference/answersheet/model_finetune_1000_results/res_DM21339_pdf_4_jpg_7.pkl
+268,72,316,84,268,72,315,72,315,83,268,83,taae,the,0.6842842698097229,0.28420281782746315,0.437268503010273,/content/outputs/inference/answersheet/model_finetune_1000_results/res_DM21339_pdf_4_jpg_8.pkl
+164,204,311,220,169,204,310,204,310,219,169,219,ataaoeeeted,offee,0.7316393256187439,0.20645686103539032,0.4905402610699336,/content/outputs/inference/answersheet/model_finetune_1000_results/res_DM21339_pdf_4_jpg_9.pkl
+119,68,164,86,119,68,163,68,163,85,119,85,taah,state,0.5114689469337463,0.22764870151877403,0.4433677519361178,/content/outputs/inference/answersheet/model_finetune_1000_results/res_DM21339_pdf_4_jpg_10.pkl

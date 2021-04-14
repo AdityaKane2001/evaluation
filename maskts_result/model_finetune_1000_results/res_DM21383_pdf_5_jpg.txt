@@ -1,0 +1,10 @@
+311,66,364,78,311,66,363,66,363,77,311,77,aaaeeeessatdllteeeee,coffee,0.7281199097633362,0.17057065814733505,0.5321626248104232,/content/outputs/inference/answersheet/model_finetune_1000_results/res_DM21383_pdf_5_jpg_0.pkl
+87,175,140,188,87,175,137,175,137,187,87,187,ceecaa,ressageid,0.5541635751724243,0.14539691805839539,0.5949516676366329,/content/outputs/inference/answersheet/model_finetune_1000_results/res_DM21383_pdf_5_jpg_1.pkl
+327,193,373,203,327,193,372,193,372,202,327,202,adltteeee,date,0.7461698055267334,0.20120120876365238,0.516330462694168,/content/outputs/inference/answersheet/model_finetune_1000_results/res_DM21383_pdf_5_jpg_2.pkl
+352,219,377,227,352,219,376,219,376,226,352,226,hteeee,the,0.5390011668205261,0.1334481748441855,0.46438611112535,/content/outputs/inference/answersheet/model_finetune_1000_results/res_DM21383_pdf_5_jpg_3.pkl
+11,170,62,183,11,170,61,170,61,182,11,182,saaarieeatttt,from,0.5868916511535645,0.14241693971248773,0.5786545671522617,/content/outputs/inference/answersheet/model_finetune_1000_results/res_DM21383_pdf_5_jpg_4.pkl
+73,52,130,66,73,52,129,52,129,65,73,65,eaata,from,0.5645452737808228,0.13614521324634551,0.49188809394836425,/content/outputs/inference/answersheet/model_finetune_1000_results/res_DM21383_pdf_5_jpg_5.pkl
+217,67,242,77,217,67,241,67,241,76,217,76,ettdddddddddddaad,sale,0.7124773263931274,0.1462342844289892,0.5495193332433701,/content/outputs/inference/answersheet/model_finetune_1000_results/res_DM21383_pdf_5_jpg_6.pkl
+314,89,373,101,314,89,372,89,372,100,314,100,tttsee,the,0.633392870426178,0.14441231514016786,0.3275136314332485,/content/outputs/inference/answersheet/model_finetune_1000_results/res_DM21383_pdf_5_jpg_7.pkl
+138,55,178,67,138,55,177,55,177,66,138,66,taattltttteeee,the,0.5571847558021545,0.26634633434670313,0.6038753986358643,/content/outputs/inference/answersheet/model_finetune_1000_results/res_DM21383_pdf_5_jpg_8.pkl
+227,63,372,80,227,65,368,65,368,79,227,79,teeeeeeeiene,come,0.5305960178375244,0.14591015875339508,0.2963157594203949,/content/outputs/inference/answersheet/model_finetune_1000_results/res_DM21383_pdf_5_jpg_9.pkl

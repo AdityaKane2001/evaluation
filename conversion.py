@@ -135,7 +135,7 @@ class RetinaConverter(Converter):
 
         return annotations
 
-# TODO CRAFTConverter
+
 
 
 class CRAFTConverter(Converter):
@@ -183,7 +183,51 @@ class CRAFTConverter(Converter):
         annot_list = [i for i in all_list if i.endswith('.txt')]
         return annot_list
 
-class CRAFTEvaluator:
-    #TODO
-    def __init__(self):
-        pass
+
+class MaskTextConverter(Converter):
+    def __init__(self,source):
+        Converter.__init__(self,source,source_type='dir')
+        self.source = source
+
+    def parser(self):
+        annotations= dict()
+        annots_list = self.get_annot_list()
+        for i in annots_list:
+            annots = self.read_to_arr('craft_result/' + i)
+            annotations[i[4:]] = np.array(annots)
+        return annotations
+
+    def read_to_arr(self,filename):
+        annots = []
+        with open(filename, 'r') as f:
+            for line in f:
+                if line == '':
+                    continue
+
+                nums = line.split(',')
+                x1 = float(nums[0]) * 640 / 416
+                y1 = float(nums[1]) * 640 / 416
+                x2 = float(nums[2]) * 640 / 416
+                y2 = float(nums[3]) * 640 / 416
+
+                x3 = float(nums[4]) * 640 / 416
+                y3 = float(nums[5]) * 640 / 416
+                x4 = float(nums[6]) * 640 / 416
+                y4 = float(nums[7]) * 640 / 416
+
+                x5 = float(nums[8]) * 640 / 416
+                y5 = float(nums[9]) * 640 / 416
+                x6 = float(nums[10]) * 640 / 416
+                y6 = float(nums[11]) * 640 / 416
+                annots.append([x1, y1, x2, y2, x3, y3, x4, y4, x5, y5, x6, y6])
+                # del nums,x,y,w,h
+        return np.array(annots)
+
+    def get_annot_list(self):
+        all_list = os.listdir(self.source)
+        annot_list = [i for i in all_list if i.endswith('.txt')]
+        return annot_list
+
+#TODO: MaskTextConverter
+#TODO: DBNetConverter
+#TODO: ABCNetCOnverter
