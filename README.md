@@ -1,6 +1,6 @@
 # evaluation
 
-Repository for evaluation metrics calculation of YOLO, RetinaNet models. Pushed from Pycharm.
+Repository for evaluation metrics calculation of YOLO, RetinaNet models. Pushed from Pycharm.   
 
 Important functions:
 
