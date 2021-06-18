@@ -2,7 +2,7 @@ import cv2
 from conversion import *
 from shapely.geometry import Polygon
 
-
+eps = 10**-5
 def are_same(dict1, dict2):
     dict2_keys = dict2.keys()
     for i in dict1.keys():
@@ -61,7 +61,7 @@ def iou(boxA, boxB):
     # rectangles
     boxAArea = (boxA[2] - boxA[0]) * (boxA[3] - boxA[1])
     boxBArea = (boxB[2] - boxB[0]) * (boxB[3] - boxB[1])
-    ret_iou = interArea / float(boxAArea + boxBArea - interArea)
+    ret_iou = interArea / (float(boxAArea + boxBArea - interArea) + eps)
     return ret_iou
 
 
@@ -264,7 +264,7 @@ def get_num_bbox(annot_dict):
     return num
 
 
-def evaluate(gt, predicted, iou_threshold=0.5, conf_thresh=0.5):
+def evaluate(gt, predicted, iou_threshold=0.05, conf_thresh=0.05):
     print('Running tests...')
     false_negatives = get_false_negatives(gt, predicted)
     false_positives = 0
@@ -272,20 +272,27 @@ def evaluate(gt, predicted, iou_threshold=0.5, conf_thresh=0.5):
 
     num_gt_annots = 0
     num_pred_annots = 0
+    #print(gt)
+
 
     for i in predicted.keys():
         gt_key = [key for key in gt.keys() if i[:25] in key]
+
+        if gt_key == []:
+
+            continue
         gt_annots = gt[gt_key[0]]
 
         pred_annots = predicted[i]
         pred_annots = box_pruning(pred_annots, conf_thresh=conf_thresh)
 
-        draw_predictions(i, gt_annots, pred_annots)
-
+        #draw_predictions(i, gt_annots, pred_annots)
+        print('GT: ',gt_annots)
+        print('Pred:',pred_annots)
         num_pred_annots += pred_annots.shape[0]
 
         overlaps = compute_overlap(gt_annots, pred_annots)  # (gt_len,pred_len)
-
+        print(gt_annots)
         if isempty(gt_annots):
             false_positives += pred_annots.shape[0]
 
