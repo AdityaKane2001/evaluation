@@ -19,17 +19,6 @@ class Converter:
         self.source_type = source_type  # Must be `file` or `dir`
 
     def parser(self):
-        '''
-        Args:
-            None
-
-        Returns:
-            `Annotation` object
-
-        Raises:
-            Not implemented error
-        '''
-
         raise NotImplementedError
 
     def __call__(self):
@@ -73,26 +62,26 @@ class YOLOConverter(Converter):
                 annotations[i] = self.read_to_arr(os.path.join(self.source, i))
             return annotations
         else:
-            raise OSError('Not a directory')
+            raise ValueError('Not a directory')
 
     def read_to_arr(self, file_path):
         annots = []
         with open(file_path, 'r') as f:
             for line in f:
                 nums = line.split()
-                x1 = float(nums[1]) * 640
-                y1 = float(nums[2]) * 640
-                x2 = float(nums[3]) * 640
-                y2 = float(nums[2]) * 640
-                x3 = float(nums[3]) * 640
-                y3 = float(nums[4]) * 640
-                x4 = float(nums[1]) * 640
-                y4 = float(nums[4]) * 64
+                x1 = float(nums[1])
+                y1 = float(nums[2])
+                x2 = float(nums[3])
+                y2 = float(nums[2])
+                x3 = float(nums[3])
+                y3 = float(nums[4])
+                x4 = float(nums[1])
+                y4 = float(nums[4])
                 # x1 = x - (w/2)
                 # x2 = x + (w/2)
                 # y1 = y - (h/2)
                 # y2 = y + (h/2)
-                annots.append([x1, y1, x2, y2, x3, y3, x4, y4])
+                annots.append([x1, y1, x3, y3, float(nums[5]) ])
                 # del nums,x,y,w,h
         return np.array(annots)
 
