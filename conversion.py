@@ -137,7 +137,7 @@ class CRAFTConverter(Converter):
         annotations = dict()
         annot_list = self.get_annot_list()
         for i in annot_list:
-            annots = self.read_to_arr('craft_result/' + i)
+            annots = self.read_to_arr(os.path.join(self.source, i))
             annotations[i[4:]] = np.array(annots)
         return annotations
 
@@ -163,7 +163,7 @@ class CRAFTConverter(Converter):
         return np.array(annots)
 
     def get_annot_list(self):
-        all_list = os.listdir('craft_result')
+        all_list = os.listdir(self.source)
         annot_list = [i for i in all_list if i.endswith('.txt')]
         return annot_list
 
@@ -177,7 +177,7 @@ class MaskTextConverter(Converter):
         annotations = dict()
         annots_list = self.get_annot_list()
         for i in annots_list:
-            annots = self.read_to_arr('maskts_result/model_finetune_1000_results/' + i)
+            annots = self.read_to_arr(os.path.join(self.source,i))
             annotations[i[4:]] = np.array(annots)
         return annotations
 
