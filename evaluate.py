@@ -21,3 +21,7 @@ evaluate(gt, yolo_annots)
 
 #print(craft_evaluate(gt, craft_annots,0.1))
 #evaluate(gt,predicted,0.5,0)
+#TODO Get all MaskTextSpotter, CRAFT annotations
+#TODO Note all mAPs for all things
+#TODO run script for all of them
+
