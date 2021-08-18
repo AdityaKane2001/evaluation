@@ -71,18 +71,9 @@ class YOLOConverter(Converter):
                 nums = line.split()
                 x1 = float(nums[1])
                 y1 = float(nums[2])
-                x2 = float(nums[3])
-                y2 = float(nums[2])
                 x3 = float(nums[3])
                 y3 = float(nums[4])
-                x4 = float(nums[1])
-                y4 = float(nums[4])
-                # x1 = x - (w/2)
-                # x2 = x + (w/2)
-                # y1 = y - (h/2)
-                # y2 = y + (h/2)
                 annots.append([x1, y1, x3, y3, float(nums[5]) ])
-                # del nums,x,y,w,h
         return np.array(annots)
 
 
@@ -105,10 +96,10 @@ class RetinaConverter(Converter):
                 annots = []
 
                 for j in part.iterrows():
-                    x1 = float(j[1][1]) * 640 / 416
-                    y1 = float(j[1][2]) * 640 / 416
-                    x2 = float(j[1][3]) * 640 / 416
-                    y2 = float(j[1][4]) * 640 / 416
+                    x1 = float(j[1][1]) #* 640
+                    y1 = float(j[1][2]) #* 640
+                    x2 = float(j[1][3]) #* 640
+                    y2 = float(j[1][4]) #* 640
                     conf = float(j[1][5])
                     annots.append([x1, y1, x2, y2, conf])
                 annots = np.array(annots)
@@ -138,7 +129,7 @@ class CRAFTConverter(Converter):
         annot_list = self.get_annot_list()
         for i in annot_list:
             annots = self.read_to_arr(os.path.join(self.source, i))
-            annotations[i[4:]] = np.array(annots)
+            annotations[i[:-4]] = np.array(annots)
         return annotations
 
     def read_to_arr(self, file_path):

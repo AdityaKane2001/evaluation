@@ -215,6 +215,7 @@ def get_false_negatives(gt, pred):
 
 def get_quad_false_negatives(gt, pred):
     fn = 0
+
     for i in gt.keys():
         gt_annots = gt[i]
         pred_key = [key for key in pred.keys() if i[:20] in key]
@@ -246,7 +247,6 @@ def get_hex_false_negatives(gt, pred):
                 continue
 
             pred_annots = pred[pred_key[0]]
-            print(i)
 
             all_overlaps = [compute_hex_overlap(np.array([gt_annots[k]]), pred_annots) for k in range(len(gt_annots))]
 
@@ -284,7 +284,7 @@ def get_num_bbox(annot_dict):
     return num
 
 
-def evaluate(gt, predicted, iou_threshold=0.05, conf_thresh=0.05):
+def evaluate(gt, predicted, iou_threshold=0.5, conf_thresh=0.05):
     print('Running tests...')
     false_negatives = get_false_negatives(gt, predicted)
     false_positives = 0
@@ -307,11 +307,12 @@ def evaluate(gt, predicted, iou_threshold=0.05, conf_thresh=0.05):
         pred_annots = box_pruning(pred_annots, conf_thresh=conf_thresh)
 
         #draw_predictions(i, gt_annots, pred_annots)
-        print('GT: ',gt_annots)
-        print('Pred:',pred_annots)
+
         num_pred_annots += pred_annots.shape[0]
 
         overlaps = compute_overlap(gt_annots, pred_annots)  # (gt_len,pred_len)
+
+        print(overlaps)
 
         if isempty(gt_annots):
             false_positives += pred_annots.shape[0]
@@ -335,15 +336,19 @@ def evaluate(gt, predicted, iou_threshold=0.05, conf_thresh=0.05):
 
 def craft_evaluate(gt, predicted, iou_threshold=0.5):
     print('Running tests...')
-    false_negatives = get_false_negatives(gt, predicted)
+    false_negatives = get_quad_false_negatives(gt, predicted)
     false_positives = 0
     true_positives = 0
 
     num_gt_annots = 0
     num_pred_annots = 0
 
+
     for i in predicted.keys():
-        gt_key = [key for key in gt.keys() if i[:25] in key]
+        gt_key = [key for key in gt.keys() if i[4:25] in key]
+        if gt_key == []:
+            false_positives += len(predicted[i])
+            continue
         gt_annots = gt[gt_key[0]]
 
         pred_annots = predicted[i]
@@ -362,8 +367,9 @@ def craft_evaluate(gt, predicted, iou_threshold=0.5):
 
             num_gt_annots += len(gt_annots)
             overlaps = compute_quad_overlap(gt_annots, pred_annots)
+
             true_positives += len(np.where(overlaps > iou_threshold)[0])
-            false_positives += get_quad_false_negatives(overlaps, iou_threshold)
+            false_positives += get_false_positives(overlaps, iou_threshold)
     print('True positives: ', true_positives)
     print('False positives: ', false_positives)
     print('False negatives: ', false_negatives)
@@ -384,9 +390,10 @@ def mask_evaluate(gt, predicted, iou_threshold=0.5):
 
     for i in predicted.keys():
         gt_key = [key for key in gt.keys() if i.strip('.txt') in key]
-        print(i)
         gt_annots = gt[gt_key[0]]
-
+        if gt_key == []:
+            false_positives += len(predicted[i])
+            continue
         pred_annots = predicted[i]
         # pred_annots = box_pruning(pred_annots, conf_thresh=conf_thresh)
 
@@ -404,7 +411,12 @@ def mask_evaluate(gt, predicted, iou_threshold=0.5):
             num_gt_annots += len(gt_annots)
             overlaps = compute_quad_overlap(gt_annots, pred_annots)
             true_positives += len(np.where(overlaps > iou_threshold)[0])
-            false_positives += get_quad_false_negatives(gt_annots, pred_annots)
+
+            print(gt_annots)
+            print()
+            print(pred_annots)
+
+            false_positives += get_false_positives(overlaps, iou_threshold)
     print('True positives: ', true_positives)
     print('False positives: ', false_positives)
     print('False negatives: ', false_negatives)
